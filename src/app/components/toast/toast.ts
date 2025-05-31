@@ -11,7 +11,7 @@ import { ToastService, ToastData } from '../../services/toast';
   templateUrl: './toast.html',
   styleUrls: ['./toast.scss'],
 })
-export class ToastComponent implements OnInit, OnDestroy {
+export class Toast implements OnInit, OnDestroy {
   private toastService = inject(ToastService);
   private subscription = new Subscription();
 
