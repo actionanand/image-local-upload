@@ -1,12 +1,15 @@
 import { Component, inject } from '@angular/core';
-import { ImageService } from '../../services/image.service';
+import { NgIf } from '@angular/common';
+
+import { ImageService } from '../../services/image';
 
 @Component({
   selector: 'app-image-upload',
-  templateUrl: './image-upload.component.html',
-  styleUrls: ['./image-upload.component.scss'],
+  imports: [NgIf],
+  templateUrl: './image-upload.html',
+  styleUrls: ['./image-upload.scss'],
 })
-export class ImageUploadComponent {
+export class ImageUpload {
   isUploading = false;
   errorMessage = '';
 

@@ -1,13 +1,17 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ImageService, ImageItem } from '../../services/image.service';
+import { DatePipe, NgIf } from '@angular/common';
+
+import { ImageService } from '../../services/image';
+import { ImageItem } from '../../models/image.model';
 
 @Component({
   selector: 'app-image-detail',
-  templateUrl: './image-detail.component.html',
-  styleUrls: ['./image-detail.component.scss'],
+  imports: [NgIf, DatePipe],
+  templateUrl: './image-detail.html',
+  styleUrls: ['./image-detail.scss'],
 })
-export class ImageDetailComponent implements OnInit {
+export class ImageDetail implements OnInit {
   image?: ImageItem;
 
   private route = inject(ActivatedRoute);

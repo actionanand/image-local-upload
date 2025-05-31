@@ -1,13 +1,8 @@
 import { Injectable } from '@angular/core';
+
 import { BehaviorSubject } from 'rxjs';
 
-export interface ImageItem {
-  id: string;
-  name: string;
-  base64: string;
-  type: string;
-  date: Date;
-}
+import { ImageItem } from '../models/image.model';
 
 @Injectable({
   providedIn: 'root',

@@ -1,12 +1,16 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ImageService, ImageItem } from '../../services/image.service';
+import { DatePipe, NgFor, NgIf } from '@angular/common';
+
+import { ImageService } from '../../services/image';
+import { ImageItem } from '../../models/image.model';
 
 @Component({
   selector: 'app-image-gallery',
-  templateUrl: './image-gallery.component.html',
-  styleUrls: ['./image-gallery.component.scss'],
+  imports: [NgIf, NgFor, DatePipe],
+  templateUrl: './image-gallery.html',
+  styleUrls: ['./image-gallery.scss'],
 })
-export class ImageGalleryComponent implements OnInit {
+export class ImageGallery implements OnInit {
   images: ImageItem[] = [];
 
   private imageService = inject(ImageService);
