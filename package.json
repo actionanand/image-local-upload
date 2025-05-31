@@ -8,6 +8,7 @@
     "develop": "ng serve --port 4203",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "build:gh": "ng build --base-href /image-local-upload/",
     "test": "ng test",
     "lint": "ng lint",
     "copy-error-page": "cp dist/image-local-upload/browser/index.html dist/image-local-upload/browser/404.html",
