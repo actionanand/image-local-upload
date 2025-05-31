@@ -1,0 +1,11 @@
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<div class="confirmation-overlay" *ngIf="activeConfirmation" (click)="onOverlayClick($event)">
+  <div class="confirmation-dialog">
+    <div class="confirmation-message">{{ activeConfirmation.message }}</div>
+    <div class="confirmation-actions">
+      <button class="confirm-btn" (click)="confirm()">Yes</button>
+      <button class="cancel-btn" (click)="cancel()">No</button>
+    </div>
+  </div>
+</div>

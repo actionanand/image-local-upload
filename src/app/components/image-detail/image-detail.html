@@ -1,0 +1,43 @@
+<div class="detail-container" *ngIf="image; else notFound">
+  <div class="detail-header">
+    <h2>{{ image.name }}</h2>
+    <div class="detail-info">
+      <span>Type: {{ image.type }}</span>
+      <span>Uploaded: {{ image.date | date:'medium' }}</span>
+    </div>
+    <button class="download-btn" (click)="downloadImage()">Download</button>
+  </div>
+
+  <div class="image-container">
+    <img [src]="image.base64" [alt]="image.name" />
+  </div>
+
+  <!-- Object URL Section -->
+  <div class="object-url-container" *ngIf="objectUrl">
+    <h3>Direct Object URL:</h3>
+    <div class="url-display">
+      <input type="text" [value]="objectUrl" readonly class="url-input" />
+      <div class="url-actions">
+        <button class="url-btn" (click)="copyObjectUrl()" title="Copy URL">Copy</button>
+        <button class="url-btn" (click)="openInNewTab()" title="Open in new tab">Open</button>
+      </div>
+    </div>
+    <p class="url-note">This URL is temporary and will only work in the current browser session.</p>
+  </div>
+
+  <div class="base64-container">
+    <h3>Base64 Data:</h3>
+    <div class="base64-display">
+      <textarea readonly>{{ image.base64 }}</textarea>
+      <button class="copy-btn" (click)="copyBase64()" title="Copy Base64 data">Copy Base64</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #notFound>
+  <div class="not-found">
+    <h2>Image not found</h2>
+    <p>The requested image could not be found.</p>
+    <a routerLink="/">Return to gallery</a>
+  </div>
+</ng-template>

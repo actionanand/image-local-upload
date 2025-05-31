@@ -1,2 +1,16 @@
-<div> Hello {{ title }} </div>
-<router-outlet />
+<div class="app-container">
+  <header>
+    <h1>{{ title }}</h1>
+  </header>
+
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer>
+    <p>Angular Image Upload & Base64 Viewer</p>
+  </footer>
+
+  <app-toast></app-toast>
+  <app-confirmation></app-confirmation>
+</div>
