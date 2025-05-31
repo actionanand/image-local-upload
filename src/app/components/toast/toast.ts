@@ -22,15 +22,21 @@ export class Toast implements OnInit {
 
   ngOnInit(): void {
     this.toastSub = this.toastService.toast$.subscribe(toast => {
-      const id = this.counter++;
-      const toastWithId = { ...toast, id };
+      // Create a new toast with unique ID
+      const newToast = {
+        id: Date.now(),
+        message: toast.message || 'Notification', // Fallback message
+        type: toast.type || 'info',
+        duration: toast.duration || 3000,
+      };
 
-      this.activeToasts.push(toastWithId);
+      // Add to active toasts
+      this.activeToasts.push(newToast);
 
-      // Remove toast after duration
+      // Remove after duration
       setTimeout(() => {
-        this.activeToasts = this.activeToasts.filter(t => t.id !== id);
-      }, toast.duration || 3000);
+        this.activeToasts = this.activeToasts.filter(t => t.id !== newToast.id);
+      }, newToast.duration);
     });
 
     this.destroyRef.onDestroy(() => {

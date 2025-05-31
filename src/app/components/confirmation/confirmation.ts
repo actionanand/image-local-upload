@@ -26,8 +26,10 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
 
   confirm(): void {
     if (this.activeConfirmation) {
-      this.activeConfirmation.resolve(true);
+      const resolveReference = this.activeConfirmation.resolve;
       this.activeConfirmation = null;
+
+      setTimeout(() => resolveReference(true), 0);
     }
   }
 

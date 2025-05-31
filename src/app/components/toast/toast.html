@@ -1,5 +1,5 @@
 <div class="toast-container">
-  <div *ngFor="let toast of activeToasts; let i = index" class="toast" [ngClass]="toast.type" [@toastAnimation]>
-    {{ toast.message }}
+  <div *ngFor="let toast of activeToasts; let i = index" class="toast" [ngClass]="toast.type">
+    <span class="toast-message">{{ toast.message }}</span>
   </div>
 </div>
