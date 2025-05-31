@@ -1,2 +1,18 @@
-<div> Hello {{ title }} </div>
-<router-outlet />
+<div class="app-container">
+  <header>
+    <h1>{{ title }}</h1>
+  </header>
+
+  <main>
+    <router-outlet></router-outlet>
+
+    <div class="home-content" *ngIf="router.url === '/home'">
+      <app-image-upload></app-image-upload>
+      <app-image-gallery></app-image-gallery>
+    </div>
+  </main>
+
+  <footer>
+    <p>Angular Image Upload & Base64 Viewer</p>
+  </footer>
+</div>

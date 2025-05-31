@@ -1,0 +1,27 @@
+<div class="detail-container" *ngIf="image; else notFound">
+  <div class="detail-header">
+    <h2>{{ image.name }}</h2>
+    <div class="detail-info">
+      <span>Type: {{ image.type }}</span>
+      <span>Uploaded: {{ image.date | date:'medium' }}</span>
+    </div>
+    <button class="download-btn" (click)="downloadImage()">Download</button>
+  </div>
+
+  <div class="image-container">
+    <img [src]="image.base64" [alt]="image.name" />
+  </div>
+
+  <div class="base64-container">
+    <h3>Base64 Data:</h3>
+    <textarea readonly>{{ image.base64 }}</textarea>
+  </div>
+</div>
+
+<ng-template #notFound>
+  <div class="not-found">
+    <h2>Image not found</h2>
+    <p>The requested image could not be found.</p>
+    <a routerLink="/">Return to gallery</a>
+  </div>
+</ng-template>

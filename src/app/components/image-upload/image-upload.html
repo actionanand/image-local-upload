@@ -1,0 +1,16 @@
+<div class="upload-container">
+  <h2>Upload Image</h2>
+
+  <div class="upload-area">
+    <label for="file-input" class="upload-label">
+      <span class="upload-icon">+</span>
+      <span>Select image to upload</span>
+    </label>
+
+    <input type="file" id="file-input" accept="image/*" (change)="onFileSelected($event)" [disabled]="isUploading" />
+  </div>
+
+  <div *ngIf="isUploading" class="upload-status">Uploading...</div>
+
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+</div>
