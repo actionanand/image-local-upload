@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { NgClass, NgFor } from '@angular/common';
 
 import { Subscription } from 'rxjs';
@@ -11,15 +11,17 @@ import { ToastService, ToastData } from '../../services/toast';
   templateUrl: './toast.html',
   styleUrls: ['./toast.scss'],
 })
-export class Toast implements OnInit, OnDestroy {
+export class Toast implements OnInit {
   private toastService = inject(ToastService);
-  private subscription = new Subscription();
+  private destroyRef = inject(DestroyRef);
+  private toastSub = new Subscription();
 
   activeToasts: (ToastData & { id: number })[] = [];
+
   private counter = 0;
 
   ngOnInit(): void {
-    this.subscription = this.toastService.toast$.subscribe(toast => {
+    this.toastSub = this.toastService.toast$.subscribe(toast => {
       const id = this.counter++;
       const toastWithId = { ...toast, id };
 
@@ -30,9 +32,11 @@ export class Toast implements OnInit, OnDestroy {
         this.activeToasts = this.activeToasts.filter(t => t.id !== id);
       }, toast.duration || 3000);
     });
-  }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.destroyRef.onDestroy(() => {
+      if (this.toastSub) {
+        this.toastSub.unsubscribe();
+      }
+    });
   }
 }

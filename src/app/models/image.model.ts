@@ -5,3 +5,8 @@ export interface ImageItem {
   type: string;
   date: Date;
 }
+
+export interface ConfirmationRequest {
+  message: string;
+  resolve: (result: boolean) => void;
+}

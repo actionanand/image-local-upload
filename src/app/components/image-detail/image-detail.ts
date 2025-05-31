@@ -4,6 +4,7 @@ import { DatePipe, NgIf } from '@angular/common';
 
 import { ImageService } from '../../services/image';
 import { ImageItem } from '../../models/image.model';
+import { ToastService } from '../../services/toast';
 
 @Component({
   selector: 'app-image-detail',
@@ -17,6 +18,7 @@ export class ImageDetail implements OnInit, OnDestroy {
 
   private route = inject(ActivatedRoute);
   private imageService = inject(ImageService);
+  private toastService = inject(ToastService);
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -53,8 +55,11 @@ export class ImageDetail implements OnInit, OnDestroy {
     if (this.objectUrl) {
       navigator.clipboard
         .writeText(this.objectUrl)
-        .then(() => alert('URL copied to clipboard!'))
-        .catch(err => console.error('Could not copy URL: ', err));
+        .then(() => this.toastService.success('URL copied to clipboard!'))
+        .catch(err => {
+          console.error('Could not copy URL: ', err);
+          this.toastService.error('Failed to copy URL');
+        });
     }
   }
 
@@ -63,10 +68,11 @@ export class ImageDetail implements OnInit, OnDestroy {
       navigator.clipboard
         .writeText(this.image.base64)
         .then(() => {
-          alert('Base64 data copied to clipboard!');
+          this.toastService.success('Base64 data copied to clipboard!');
         })
         .catch(err => {
           console.error('Could not copy Base64 data: ', err);
+          this.toastService.error('Failed to copy Base64 data');
         });
     }
   }
@@ -80,6 +86,7 @@ export class ImageDetail implements OnInit, OnDestroy {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    this.toastService.info('Download started');
   }
 
   ngOnDestroy(): void {
