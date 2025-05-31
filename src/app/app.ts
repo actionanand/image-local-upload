@@ -1,13 +1,9 @@
-import { NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 
-import { ImageUpload } from './components/image-upload/image-upload';
-import { ImageGallery } from './components/image-gallery/image-gallery';
-
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NgIf, ImageUpload, ImageGallery],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
