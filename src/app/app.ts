@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { RouterOutlet, Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +9,4 @@ import { RouterOutlet, Router } from '@angular/router';
 })
 export class App {
   title = 'Image Local Upload';
-
-  protected router = inject(Router);
 }
