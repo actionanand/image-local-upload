@@ -8,6 +8,7 @@
     "develop": "ng serve --port 4203",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "build:gh": "ng build --base-href /image-local-upload/",
     "test": "ng test",
     "lint": "ng lint",
     "copy-error-page": "cp dist/image-local-upload/browser/index.html dist/image-local-upload/browser/404.html",
@@ -52,6 +53,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^3.5.3",
     "pretty-quick": "^4.1.1",
+    "run-s": "^0.0.0",
     "typescript": "~5.8.2"
   },
   "engines": {
