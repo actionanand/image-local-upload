@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 
 import { ImageItem, UploadOptions } from '../models/image.model';
 import { ToastService } from './toast';
+import { environment as env } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -60,9 +61,22 @@ export class ImageService {
     }
   }
 
+  isFileTooLarge(file: File): boolean {
+    const MAX_FILE_SIZE_MB = env.MAX_FILE_SIZE_MB || 5;
+    const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+    return file.size > MAX_FILE_SIZE_BYTES;
+  }
+
   uploadImage(options: UploadOptions): Promise<ImageItem | null> {
     return new Promise(resolve => {
       try {
+        // Double check size constraint if file is provided
+        if (options.file && this.isFileTooLarge(options.file)) {
+          this.toastService.error(`File is too large. Maximum size is 5 MB.`);
+          resolve(null);
+          return;
+        }
+
         const newImage: ImageItem = {
           id: Date.now().toString(),
           name: options.file.name,

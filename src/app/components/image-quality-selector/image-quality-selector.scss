@@ -69,3 +69,17 @@ h4 {
   color: #6c757d;
   margin-top: 3px;
 }
+
+// Add focus styles for keyboard navigation
+.quality-option:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+// Style for keyboard focus on confirmation buttons
+.confirm-btn:focus,
+.cancel-btn:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.3);
+}

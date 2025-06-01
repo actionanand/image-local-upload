@@ -7,6 +7,7 @@ import { ImageQualityService } from '../../services/image-quality';
 import { ToastService } from '../../services/toast';
 import { ImageQualitySelector } from '../image-quality-selector/image-quality-selector';
 import { FileSizePipe } from '../../shared/pipes/file-size-pipe';
+import { environment as env } from '../../../environments/environment';
 
 @Component({
   selector: 'app-image-upload',
@@ -21,6 +22,9 @@ export class ImageUpload {
   previewUrl: string | null = null;
   selectedQuality: ImageQuality = 'original';
 
+  protected readonly MAX_FILE_SIZE_MB = env.MAX_FILE_SIZE_MB || 5; // Default to 5MB if not set in environment
+  protected readonly MAX_FILE_SIZE_BYTES = this.MAX_FILE_SIZE_MB * 1024 * 1024; // 5MB in bytes
+
   private imageService = inject(ImageService);
   private imageQualityService = inject(ImageQualityService);
   private toastService = inject(ToastService);
@@ -33,6 +37,13 @@ export class ImageUpload {
     }
 
     const file = input.files[0];
+
+    // Check file size first
+    if (file.size > this.MAX_FILE_SIZE_BYTES) {
+      this.errorMessage = `File is too large. Maximum size is ${this.MAX_FILE_SIZE_MB} MB.`;
+      input.value = ''; // Clear the file input
+      return;
+    }
 
     // Validate file is an image
     if (!file.type.startsWith('image/')) {

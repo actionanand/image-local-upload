@@ -49,7 +49,7 @@ export class FormatConversionModal {
     this.selectedFormat = format;
   }
 
-  closeModal(event: MouseEvent): void {
+  closeModal(event: Event): void {
     if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
       this.close.emit();
     }

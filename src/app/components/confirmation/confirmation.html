@@ -1,11 +1,17 @@
-<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
-<div class="confirmation-overlay" *ngIf="activeConfirmation" (click)="onOverlayClick($event)">
+<div
+  class="confirmation-overlay"
+  *ngIf="activeConfirmation"
+  (click)="onOverlayClick($event)"
+  (keyup.enter)="onOverlayClick($event)"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="confirmation-title"
+  tabindex="0">
   <div class="confirmation-dialog">
-    <div class="confirmation-message">{{ activeConfirmation.message }}</div>
+    <div class="confirmation-message" id="confirmation-title">{{ activeConfirmation.message }}</div>
     <div class="confirmation-actions">
-      <button class="confirm-btn" (click)="confirm()">Yes</button>
-      <button class="cancel-btn" (click)="cancel()">No</button>
+      <button class="cancel-btn" (click)="cancel()" (keyup.enter)="cancel()" tabindex="0">No</button>
+      <button class="confirm-btn" (click)="confirm()" (keyup.enter)="confirm()" tabindex="0">Yes</button>
     </div>
   </div>
 </div>

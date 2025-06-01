@@ -5,7 +5,8 @@
     <div class="upload-area">
       <label for="file-input" class="upload-label">
         <span class="upload-icon">+</span>
-        <span>Select image to upload</span>
+        <span class="upload-text">Select image to upload</span>
+        <span class="upload-hint">Maximum file size: {{ MAX_FILE_SIZE_MB }} MB</span>
       </label>
 
       <input type="file" id="file-input" accept="image/*" (change)="onFileSelected($event)" [disabled]="isUploading" />
@@ -30,8 +31,13 @@
       </app-image-quality-selector>
 
       <div class="action-buttons">
-        <button class="btn btn-cancel" (click)="cancelUpload()">Cancel</button>
-        <button class="btn btn-upload" (click)="uploadImage()" [disabled]="isUploading">
+        <button class="btn btn-cancel" (click)="cancelUpload()" tabindex="0" aria-label="Cancel upload">Cancel</button>
+        <button
+          class="btn btn-upload"
+          (click)="uploadImage()"
+          [disabled]="isUploading"
+          tabindex="0"
+          [attr.aria-label]="isUploading ? 'Currently uploading' : 'Upload image'">
           {{ isUploading ? 'Uploading...' : 'Upload' }}
         </button>
       </div>

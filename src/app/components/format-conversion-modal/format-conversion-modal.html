@@ -1,10 +1,8 @@
-<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
-<div class="modal-overlay" *ngIf="isOpen" (click)="closeModal($event)">
+<div class="modal-overlay" *ngIf="isOpen" (click)="closeModal($event)" tabindex="0" (keyup.enter)="closeModal($event)">
   <div class="modal-content">
     <div class="modal-header">
       <h3>Convert Image Format</h3>
-      <button class="close-btn" (click)="onClose()">×</button>
+      <button class="close-btn" (click)="onClose()" (keyup.enter)="onClose()">×</button>
     </div>
 
     <div class="modal-body">
@@ -22,7 +20,8 @@
             [class.selected]="selectedFormat === format.value"
             [class.disabled]="isCurrentFormat(format.value) || isConverting"
             [disabled]="isCurrentFormat(format.value) || isConverting"
-            (click)="selectFormat(format.value)">
+            (click)="selectFormat(format.value)"
+            (keyup.enter)="selectFormat(format.value)">
             <span class="format-icon">{{ format.icon }}</span>
             <span class="format-label">{{ format.label }}</span>
           </button>
@@ -31,11 +30,12 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn-cancel" (click)="onClose()">Cancel</button>
+      <button class="btn-cancel" (click)="onClose()" (keyup.enter)="onClose()">Cancel</button>
       <button
         class="btn-convert"
         [disabled]="!selectedFormat || isConverting || isCurrentFormat(selectedFormat)"
-        (click)="convertImage()">
+        (click)="convertImage()"
+        (keyup.enter)="convertImage()">
         {{ isConverting ? 'Converting...' : 'Convert' }}
       </button>
     </div>

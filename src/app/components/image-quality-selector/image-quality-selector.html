@@ -1,18 +1,16 @@
-<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
-<div class="quality-selector-container" *ngIf="showSelector">
-  <h4>Image Quality</h4>
-  <div class="quality-options">
-    <div
-      *ngFor="let option of qualityOptions"
-      class="quality-option"
-      [class.selected]="selectedQuality === option.value"
-      (click)="selectQuality(option.value)">
-      <div class="option-radio"></div>
-      <div class="option-details">
-        <span class="option-label">{{ option.label }}</span>
-        <span class="option-description">{{ option.description }}</span>
-      </div>
-    </div>
+<div
+  *ngFor="let option of qualityOptions; let i = index"
+  class="quality-option"
+  [class.selected]="selectedQuality === option.value"
+  (click)="selectQuality(option.value)"
+  (keydown)="onOptionKeydown($event, option.value, i)"
+  role="radio"
+  [attr.aria-checked]="selectedQuality === option.value"
+  [tabindex]="selectedQuality === option.value ? 0 : -1"
+  [attr.id]="'quality-option-' + i">
+  <div class="option-radio"></div>
+  <div class="option-details">
+    <span class="option-label">{{ option.label }}</span>
+    <span class="option-description">{{ option.description }}</span>
   </div>
 </div>
