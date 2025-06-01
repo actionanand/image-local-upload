@@ -3,8 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { DatePipe, NgIf } from '@angular/common';
 
 import { ImageService } from '../../services/image';
-import { ImageItem } from '../../models/image.model';
+import { ImageItem, ImageQuality } from '../../models/image.model';
 import { ToastService } from '../../services/toast';
+import { ImageQualityService } from '../../services/image-quality';
 
 @Component({
   selector: 'app-image-detail',
@@ -19,6 +20,7 @@ export class ImageDetail implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private imageService = inject(ImageService);
   private toastService = inject(ToastService);
+  private imageQualityService = inject(ImageQualityService);
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -87,6 +89,31 @@ export class ImageDetail implements OnInit, OnDestroy {
     link.click();
     document.body.removeChild(link);
     this.toastService.info('Download started');
+  }
+
+  getQualityLabel(quality: ImageQuality): string {
+    switch (quality) {
+      case 'optimized':
+        return 'Optimized';
+      case 'medium':
+        return 'Medium';
+      case 'low':
+        return 'Low';
+      default:
+        return 'Original';
+    }
+  }
+
+  formatSize(bytes: number): string {
+    return this.imageQualityService.formatFileSize(bytes);
+  }
+
+  getSavingsPercentage(image: ImageItem): string {
+    if (image.quality === 'original' || !image.compressionRatio) {
+      return '0';
+    }
+
+    return ((1 - image.compressionRatio) * 100).toFixed(0);
   }
 
   ngOnDestroy(): void {

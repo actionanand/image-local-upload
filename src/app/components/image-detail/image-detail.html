@@ -4,7 +4,25 @@
     <div class="detail-info">
       <span>Type: {{ image.type }}</span>
       <span>Uploaded: {{ image.date | date:'medium' }}</span>
+
+      <!-- Add image quality and size information -->
+      <div class="size-info">
+        <span>Quality: {{ getQualityLabel(image.quality) }}</span>
+
+        <ng-container *ngIf="image.quality !== 'original'">
+          <span class="size-reduction">
+            <span class="label">Size reduced:</span>
+            {{ formatSize(image.originalSize) }} → {{ formatSize(image.reducedSize) }}
+            <span class="savings-badge">{{ getSavingsPercentage(image) }}% saved</span>
+          </span>
+        </ng-container>
+
+        <ng-container *ngIf="image.quality === 'original'">
+          <span>Size: {{ formatSize(image.originalSize) }}</span>
+        </ng-container>
+      </div>
     </div>
+
     <button class="download-btn" (click)="downloadImage()">Download</button>
   </div>
 

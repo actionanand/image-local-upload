@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, inject } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 
@@ -12,15 +12,30 @@ import { ConfirmationRequest } from '../../models/image.model';
   templateUrl: './confirmation.html',
   styleUrl: './confirmation.scss',
 })
-export class ConfirmationComponent implements OnInit, OnDestroy {
+export class ConfirmationComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
-  private subscription = new Subscription();
+  private elementRef = inject(ElementRef);
+  private destroyRef = inject(DestroyRef);
+
+  private confirmSub = new Subscription();
 
   activeConfirmation: ConfirmationRequest | null = null;
 
   ngOnInit(): void {
-    this.subscription = this.confirmationService.confirm$.subscribe(confirmation => {
+    // When dialog opens, focus the first button
+    this.confirmSub = this.confirmationService.confirm$.subscribe(confirmation => {
       this.activeConfirmation = confirmation;
+
+      // Focus the first button after a short delay to allow rendering
+      setTimeout(() => {
+        this.focusFirstButton();
+      }, 50);
+    });
+
+    this.destroyRef.onDestroy(() => {
+      if (this.confirmSub) {
+        this.confirmSub.unsubscribe();
+      }
     });
   }
 
@@ -40,13 +55,16 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
     }
   }
 
-  onOverlayClick(event: MouseEvent): void {
+  onOverlayClick(event: Event): void {
     if ((event.target as HTMLElement).classList.contains('confirmation-overlay')) {
       this.cancel();
     }
   }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  private focusFirstButton(): void {
+    const cancelButton = this.elementRef.nativeElement.querySelector('.cancel-btn');
+    if (cancelButton) {
+      cancelButton.focus();
+    }
   }
 }

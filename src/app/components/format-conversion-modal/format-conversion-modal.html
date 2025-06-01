@@ -1,0 +1,43 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="closeModal($event)" tabindex="0" (keyup.enter)="closeModal($event)">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Convert Image Format</h3>
+      <button class="close-btn" (click)="onClose()" (keyup.enter)="onClose()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="image-preview">
+        <img [src]="image?.base64" [alt]="image?.name" />
+      </div>
+
+      <div class="format-options">
+        <p class="info-text">Current format: {{ getCurrentFormat() }}</p>
+        <h4>Convert to:</h4>
+        <div class="format-grid">
+          <button
+            *ngFor="let format of availableFormats"
+            class="format-btn"
+            [class.selected]="selectedFormat === format.value"
+            [class.disabled]="isCurrentFormat(format.value) || isConverting"
+            [disabled]="isCurrentFormat(format.value) || isConverting"
+            (click)="selectFormat(format.value)"
+            (keyup.enter)="selectFormat(format.value)">
+            <span class="format-icon">{{ format.icon }}</span>
+            <span class="format-label">{{ format.label }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="onClose()" (keyup.enter)="onClose()">Cancel</button>
+      <button
+        class="btn-convert"
+        [disabled]="!selectedFormat || isConverting || isCurrentFormat(selectedFormat)"
+        (click)="convertImage()"
+        (keyup.enter)="convertImage()">
+        {{ isConverting ? 'Converting...' : 'Convert' }}
+      </button>
+    </div>
+  </div>
+</div>

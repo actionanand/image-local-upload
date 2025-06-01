@@ -1,0 +1,16 @@
+<div
+  *ngFor="let option of qualityOptions; let i = index"
+  class="quality-option"
+  [class.selected]="selectedQuality === option.value"
+  (click)="selectQuality(option.value)"
+  (keydown)="onOptionKeydown($event, option.value, i)"
+  role="radio"
+  [attr.aria-checked]="selectedQuality === option.value"
+  [tabindex]="selectedQuality === option.value ? 0 : -1"
+  [attr.id]="'quality-option-' + i">
+  <div class="option-radio"></div>
+  <div class="option-details">
+    <span class="option-label">{{ option.label }}</span>
+    <span class="option-description">{{ option.description }}</span>
+  </div>
+</div>
