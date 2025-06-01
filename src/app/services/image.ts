@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { ImageItem } from '../models/image.model';
+import { ImageItem, UploadOptions } from '../models/image.model';
 
 @Injectable({
   providedIn: 'root',
@@ -31,28 +31,23 @@ export class ImageService {
     this.imagesSubject.next([...this.images]);
   }
 
-  uploadImage(file: File): Promise<ImageItem> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      reader.onload = event => {
-        const base64 = event.target?.result as string;
-
-        const newImage: ImageItem = {
-          id: Date.now().toString(),
-          name: file.name,
-          base64: base64,
-          type: file.type,
-          date: new Date(),
-        };
-
-        this.images.push(newImage);
-        this.saveImages();
-        resolve(newImage);
+  uploadImage(options: UploadOptions): Promise<ImageItem> {
+    return new Promise(resolve => {
+      const newImage: ImageItem = {
+        id: Date.now().toString(),
+        name: options.file.name,
+        base64: options.base64,
+        type: options.file.type,
+        date: new Date(),
+        originalSize: options.originalSize,
+        reducedSize: options.reducedSize,
+        quality: options.quality,
+        compressionRatio: options.compressionRatio,
       };
 
-      reader.onerror = error => reject(error);
-      reader.readAsDataURL(file);
+      this.images.push(newImage);
+      this.saveImages();
+      resolve(newImage);
     });
   }
 

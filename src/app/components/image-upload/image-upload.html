@@ -1,16 +1,42 @@
 <div class="upload-container">
   <h2>Upload Image</h2>
 
-  <div class="upload-area">
-    <label for="file-input" class="upload-label">
-      <span class="upload-icon">+</span>
-      <span>Select image to upload</span>
-    </label>
+  <ng-container *ngIf="!selectedFile; else fileSelected">
+    <div class="upload-area">
+      <label for="file-input" class="upload-label">
+        <span class="upload-icon">+</span>
+        <span>Select image to upload</span>
+      </label>
 
-    <input type="file" id="file-input" accept="image/*" (change)="onFileSelected($event)" [disabled]="isUploading" />
-  </div>
+      <input type="file" id="file-input" accept="image/*" (change)="onFileSelected($event)" [disabled]="isUploading" />
+    </div>
+  </ng-container>
 
-  <div *ngIf="isUploading" class="upload-status">Uploading...</div>
+  <ng-template #fileSelected>
+    <div class="selected-file">
+      <div class="preview-container">
+        <img [src]="previewUrl" alt="Preview" class="image-preview" />
+      </div>
+
+      <div class="file-info">
+        <span class="file-name">{{ selectedFile?.name }}</span>
+        <span class="file-size">{{ selectedFile?.size | fileSize }}</span>
+      </div>
+
+      <app-image-quality-selector
+        [showSelector]="true"
+        [selectedQuality]="selectedQuality"
+        (qualitySelected)="onQualitySelected($event)">
+      </app-image-quality-selector>
+
+      <div class="action-buttons">
+        <button class="btn btn-cancel" (click)="cancelUpload()">Cancel</button>
+        <button class="btn btn-upload" (click)="uploadImage()" [disabled]="isUploading">
+          {{ isUploading ? 'Uploading...' : 'Upload' }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
 
   <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
 </div>
