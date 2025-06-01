@@ -4,7 +4,7 @@
   <div class="modal-content">
     <div class="modal-header">
       <h3>Convert Image Format</h3>
-      <button class="close-btn" (click)="closeModal($event)">×</button>
+      <button class="close-btn" (click)="onClose()">×</button>
     </div>
 
     <div class="modal-body">
@@ -31,7 +31,7 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn-cancel" (click)="closeModal($event)">Cancel</button>
+      <button class="btn-cancel" (click)="onClose()">Cancel</button>
       <button
         class="btn-convert"
         [disabled]="!selectedFormat || isConverting || isCurrentFormat(selectedFormat)"

@@ -114,4 +114,89 @@ export class ImageConverterService {
         return format;
     }
   }
+
+  async convertImageWithReducedQuality(
+    imageData: string,
+    format: ImageFormat,
+    maxSizeBytes: number,
+  ): Promise<ConversionResult> {
+    // Create an image element from the base64 data
+    const img = await this.createImageFromBase64(imageData);
+
+    // Start with high quality and keep reducing until we get below target size
+    let quality = 0.8;
+    let scale = 1.0;
+    let result: { blob: Blob; base64: string };
+    let attempts = 0;
+    const maxAttempts = 5;
+
+    do {
+      if (attempts > 0) {
+        // Reduce quality and scale on subsequent attempts
+        quality = Math.max(0.1, quality - 0.15);
+
+        if (attempts > 2) {
+          // After reducing quality twice, start reducing dimensions too
+          scale = scale * 0.8;
+        }
+      }
+
+      // Create a scaled canvas
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        throw new Error('Could not get canvas context');
+      }
+
+      // Apply scaling to dimensions
+      canvas.width = Math.floor(img.width * scale);
+      canvas.height = Math.floor(img.height * scale);
+
+      // Draw image at scaled size
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Get mime type
+      const mimeType = this.getMimeType(format);
+
+      // Convert to blob with reduced quality
+      result = await new Promise<{ blob: Blob; base64: string }>((resolve, reject) => {
+        canvas.toBlob(
+          blob => {
+            if (!blob) {
+              reject(new Error('Failed to convert image'));
+              return;
+            }
+
+            // Convert blob to base64
+            const reader = new FileReader();
+            reader.onload = () => {
+              resolve({
+                blob,
+                base64: reader.result as string,
+              });
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          },
+          mimeType,
+          quality,
+        );
+      });
+
+      attempts++;
+    } while (result.blob.size > maxSizeBytes && attempts < maxAttempts);
+
+    // Get original image size (approximate from base64)
+    const originalSize = Math.ceil((imageData.length * 3) / 4);
+
+    return {
+      blob: result.blob,
+      base64: result.base64,
+      originalSize,
+      convertedSize: result.blob.size,
+      format,
+      mimeType: this.getMimeType(format),
+    };
+  }
 }

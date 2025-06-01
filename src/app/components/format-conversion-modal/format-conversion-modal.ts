@@ -54,6 +54,10 @@ export class FormatConversionModal {
     }
   }
 
+  onClose() {
+    this.close.emit();
+  }
+
   async convertImage(): Promise<void> {
     if (!this.image || !this.selectedFormat || this.isConverting) return;
 
