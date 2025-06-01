@@ -53,9 +53,10 @@
 </div>
 
 <ng-template #notFound>
-  <div class="not-found">
-    <h2>Image not found</h2>
-    <p>The requested image could not be found.</p>
-    <a routerLink="/">Return to gallery</a>
+  <div class="not-found-container">
+    <div class="not-found-icon">❌</div>
+    <h2>Image Not Found</h2>
+    <p>The requested image could not be found or may have been deleted.</p>
+    <button class="return-btn" (click)="returnToGallery()"><span class="return-icon">←</span> Return to Gallery</button>
   </div>
 </ng-template>

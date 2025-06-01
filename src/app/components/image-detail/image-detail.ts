@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe, NgIf } from '@angular/common';
 
 import { ImageService } from '../../services/image';
@@ -16,8 +16,10 @@ import { ImageQualityService } from '../../services/image-quality';
 export class ImageDetail implements OnInit, OnDestroy {
   image?: ImageItem;
   objectUrl?: string;
+  imageNotFound = false;
 
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private imageService = inject(ImageService);
   private toastService = inject(ToastService);
   private imageQualityService = inject(ImageQualityService);
@@ -29,7 +31,12 @@ export class ImageDetail implements OnInit, OnDestroy {
         this.image = this.imageService.getImageById(id);
         if (this.image) {
           this.createObjectUrl();
+          this.imageNotFound = false;
+        } else {
+          this.imageNotFound = true; // Set flag when image not found
         }
+      } else {
+        this.imageNotFound = true;
       }
     });
   }
@@ -114,6 +121,10 @@ export class ImageDetail implements OnInit, OnDestroy {
     }
 
     return ((1 - image.compressionRatio) * 100).toFixed(0);
+  }
+
+  returnToGallery(): void {
+    this.router.navigate(['/']);
   }
 
   ngOnDestroy(): void {
