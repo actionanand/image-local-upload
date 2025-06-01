@@ -25,6 +25,7 @@ export interface ReducedImage {
 }
 
 export type ImageQuality = 'original' | 'optimized' | 'medium' | 'low';
+export type ImageFormat = 'jpeg' | 'png' | 'webp' | 'gif';
 
 export interface UploadOptions {
   file: File;
@@ -33,4 +34,13 @@ export interface UploadOptions {
   originalSize: number;
   reducedSize: number;
   compressionRatio: number;
+}
+
+export interface ConversionResult {
+  blob: Blob;
+  base64: string;
+  originalSize: number;
+  convertedSize: number;
+  format: ImageFormat;
+  mimeType: string;
 }

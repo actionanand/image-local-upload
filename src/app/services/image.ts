@@ -63,4 +63,10 @@ export class ImageService {
     this.images = this.images.filter(img => img.id !== id);
     this.saveImages();
   }
+
+  addConvertedImage(convertedImage: ImageItem): void {
+    this.images.push(convertedImage);
+    this.saveImages();
+    this.imagesSubject.next([...this.images]);
+  }
 }
