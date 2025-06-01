@@ -1,0 +1,1 @@
+import{e as r,g as i}from"./chunk-3FBWLJSC.js";var n=class o{confirmSubject=new r;confirm$=this.confirmSubject.asObservable();confirm(e){return new Promise(t=>{this.confirmSubject.next({message:e,resolve:t})})}static \u0275fac=function(t){return new(t||o)};static \u0275prov=i({token:o,factory:o.\u0275fac,providedIn:"root"})};export{n as a};
