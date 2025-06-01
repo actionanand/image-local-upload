@@ -4,7 +4,6 @@ import { NgIf, NgFor } from '@angular/common';
 import { ImageFormat, ImageItem } from '../../models/image.model';
 import { ImageConverterService } from '../../services/image-converter';
 import { ToastService } from '../../services/toast';
-import { ConfirmationService } from '../../services/confirmation';
 
 @Component({
   selector: 'app-format-conversion-modal',
@@ -30,7 +29,7 @@ export class FormatConversionModal {
   ];
 
   private imageConverter = inject(ImageConverterService);
-  private confirmationService = inject(ConfirmationService);
+  private imageConverterService = inject(ImageConverterService);
   private toastService = inject(ToastService);
 
   getCurrentFormat(): string {
@@ -64,73 +63,32 @@ export class FormatConversionModal {
     if (!this.image || !this.selectedFormat || this.isConverting) return;
 
     this.isConverting = true;
+    // const MAX_RECOMMENDED_SIZE = 4 * 1024 * 1024; // 4MB
 
     try {
-      // First try regular conversion
-      const result = await this.imageConverter.convertImage(this.image.base64, this.selectedFormat);
+      // First attempt conversion
+      const result = await this.imageConverterService.convertImage(this.image.base64, this.selectedFormat);
 
-      // Check if size exceeds localStorage limits (typically around 5MB)
-      const MAX_RECOMMENDED_SIZE = 4 * 1024 * 1024; // 4MB
-      if (result.convertedSize > MAX_RECOMMENDED_SIZE) {
-        this.isConverting = false; // Pause the conversion
+      // Create a properly formatted image object
+      const convertedImage: ImageItem = {
+        id: Date.now().toString(),
+        name: this.generateNewFilename(this.image.name, this.selectedFormat),
+        base64: result.base64,
+        type: result.mimeType,
+        date: new Date(),
+        originalSize: result.originalSize,
+        reducedSize: result.convertedSize,
+        quality: 'original',
+        compressionRatio: result.convertedSize / result.originalSize,
+      };
 
-        // Ask user for confirmation to reduce quality
-        const confirmed = await this.confirmationService.confirm(
-          `The converted image (${this.formatSize(result.convertedSize)}) is too large for storage. Would you like to reduce its quality to fit?`,
-        );
-
-        if (!confirmed) {
-          this.toastService.info('Conversion cancelled');
-          return; // Cancel the operation
-        }
-
-        // User confirmed, restart conversion with reduced quality
-        this.isConverting = true;
-
-        // Convert again with reduced quality/dimensions
-        const reducedResult = await this.imageConverter.convertImageWithReducedQuality(
-          this.image.base64,
-          this.selectedFormat,
-          MAX_RECOMMENDED_SIZE,
-        );
-
-        // Create the image with reduced quality
-        const convertedImage: ImageItem = {
-          id: Date.now().toString(),
-          name: this.generateNewFilename(this.image.name, this.selectedFormat),
-          base64: reducedResult.base64,
-          type: reducedResult.mimeType,
-          date: new Date(),
-          originalSize: reducedResult.originalSize,
-          reducedSize: reducedResult.convertedSize,
-          quality: 'medium', // Mark as reduced quality
-          compressionRatio: reducedResult.convertedSize / reducedResult.originalSize,
-        };
-
-        this.converted.emit(convertedImage);
-        this.toastService.success(`Image converted and resized to fit storage limits`);
-        this.close.emit();
-      } else {
-        // Size is acceptable, proceed normally
-        const convertedImage: ImageItem = {
-          id: Date.now().toString(),
-          name: this.generateNewFilename(this.image.name, this.selectedFormat),
-          base64: result.base64,
-          type: result.mimeType,
-          date: new Date(),
-          originalSize: result.originalSize,
-          reducedSize: result.convertedSize,
-          quality: 'original',
-          compressionRatio: result.convertedSize / result.originalSize,
-        };
-
-        this.converted.emit(convertedImage);
-        this.toastService.success(`Image converted to ${this.selectedFormat.toUpperCase()}`);
-        this.close.emit();
-      }
+      // Just emit the converted image - let parent component handle success/failure
+      this.converted.emit(convertedImage);
+      this.close.emit();
     } catch (error) {
-      console.error('Conversion error:', error);
-      this.toastService.error('Failed to convert image');
+      console.error('Error during conversion:', error);
+      this.toastService.error('Failed to convert image format');
+      this.close.emit();
     } finally {
       this.isConverting = false;
     }

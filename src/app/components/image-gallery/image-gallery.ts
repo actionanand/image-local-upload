@@ -58,6 +58,20 @@ export class ImageGallery implements OnInit {
   }
 
   onImageConverted(convertedImage: ImageItem): void {
-    this.imageService.addConvertedImage(convertedImage);
+    // Pass the converted image to the service, which returns success/failure
+    const success = this.imageService.addConvertedImage(convertedImage);
+
+    if (success) {
+      // Only show success message if storage succeeded
+      if (convertedImage.quality === 'medium') {
+        this.toastService.success(`Image converted and resized to fit storage limits`);
+      } else {
+        this.toastService.success(`Image converted to ${convertedImage.type.split('/')[1].toUpperCase()}`);
+      }
+    }
+    // The error case is handled by the image service
+
+    // Always close the modal
+    this.closeFormatConversion();
   }
 }

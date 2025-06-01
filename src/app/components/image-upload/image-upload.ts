@@ -70,8 +70,8 @@ export class ImageUpload {
       // Process the image with selected quality
       const reducedImage = await this.imageQualityService.reduceImageQuality(this.selectedFile, this.selectedQuality);
 
-      // Upload the processed image
-      await this.imageService.uploadImage({
+      // Upload the processed image - check for success
+      const uploadedImage = await this.imageService.uploadImage({
         file: this.selectedFile,
         base64: reducedImage.base64,
         quality: this.selectedQuality,
@@ -80,20 +80,23 @@ export class ImageUpload {
         compressionRatio: reducedImage.compressionRatio,
       });
 
-      // Display success message with size info
-      const originalSizeFormatted = this.imageQualityService.formatFileSize(reducedImage.originalSize);
-      const reducedSizeFormatted = this.imageQualityService.formatFileSize(reducedImage.reducedSize);
+      // Only show success message if upload was successful
+      if (uploadedImage) {
+        // Display success message with size info
+        const originalSizeFormatted = this.imageQualityService.formatFileSize(reducedImage.originalSize);
+        const reducedSizeFormatted = this.imageQualityService.formatFileSize(reducedImage.reducedSize);
 
-      if (this.selectedQuality !== 'original') {
-        const savingPercentage = ((1 - reducedImage.compressionRatio) * 100).toFixed(0);
-        this.toastService.success(
-          `Image uploaded! Size reduced from ${originalSizeFormatted} to ${reducedSizeFormatted} (${savingPercentage}% saved)`,
-        );
-      } else {
-        this.toastService.success(`Image uploaded! Size: ${originalSizeFormatted}`);
+        if (this.selectedQuality !== 'original') {
+          const savingPercentage = ((1 - reducedImage.compressionRatio) * 100).toFixed(0);
+          this.toastService.success(
+            `Image uploaded! Size reduced from ${originalSizeFormatted} to ${reducedSizeFormatted} (${savingPercentage}% saved)`,
+          );
+        } else {
+          this.toastService.success(`Image uploaded! Size: ${originalSizeFormatted}`);
+        }
       }
 
-      // Reset the form
+      // Reset the form regardless of success/failure
       this.resetForm();
     } catch (error) {
       console.error('Upload error:', error);

@@ -7,24 +7,24 @@ import { ConversionResult, ImageFormat } from '../models/image.model';
 })
 export class ImageConverterService {
   async convertImage(imageData: string, format: ImageFormat): Promise<ConversionResult> {
-    // Create an image element from the base64 data
-    const img = await this.createImageFromBase64(imageData);
+    try {
+      // Create an image element from the base64 data
+      const img = await this.createImageFromBase64(imageData);
 
-    // Convert the image to the desired format
-    const mimeType = this.getMimeType(format);
-    const { blob, base64 } = await this.convertToFormat(img, format, mimeType);
+      // Get MIME type for target format
+      const mimeType = this.getMimeType(format);
 
-    // Get original image size (approximate from base64)
-    const originalSize = Math.ceil((imageData.length * 3) / 4);
+      // Special handling for GIF to prevent large files
+      if (format === 'gif') {
+        return await this.convertToOptimizedFormat(img, format, mimeType, true);
+      }
 
-    return {
-      blob,
-      base64,
-      originalSize,
-      convertedSize: blob.size,
-      format,
-      mimeType,
-    };
+      // Regular conversion for other formats
+      return await this.convertToOptimizedFormat(img, format, mimeType, false);
+    } catch (error) {
+      console.error('Conversion error:', error);
+      throw new Error('Failed to convert image: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    }
   }
 
   private getMimeType(format: ImageFormat): string {
@@ -197,6 +197,74 @@ export class ImageConverterService {
       convertedSize: result.blob.size,
       format,
       mimeType: this.getMimeType(format),
+    };
+  }
+
+  private async convertToOptimizedFormat(
+    img: HTMLImageElement,
+    format: ImageFormat,
+    mimeType: string,
+    isGif: boolean,
+  ): Promise<ConversionResult> {
+    // For GIF, we use much more aggressive optimization
+    const maxDimension = isGif ? 300 : 1200;
+    const quality = isGif ? 0.7 : 0.9;
+
+    // Scale down if needed
+    let width = img.width;
+    let height = img.height;
+
+    if (width > maxDimension || height > maxDimension) {
+      if (width > height) {
+        height = Math.round(height * (maxDimension / width));
+        width = maxDimension;
+      } else {
+        width = Math.round(width * (maxDimension / height));
+        height = maxDimension;
+      }
+    }
+
+    // Create canvas with specified dimensions
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Could not get canvas context');
+
+    // Draw image to canvas
+    ctx.drawImage(img, 0, 0, width, height);
+
+    // Convert to blob
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob(
+        b => {
+          if (!b) reject(new Error('Failed to create blob'));
+          else resolve(b);
+        },
+        mimeType,
+        quality,
+      );
+    });
+
+    // Convert to base64
+    const base64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+
+    // Get original size (estimation)
+    const originalSize = new Blob([img.src]).size;
+
+    return {
+      blob,
+      base64,
+      originalSize,
+      convertedSize: blob.size,
+      format,
+      mimeType,
     };
   }
 }
