@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
-// import { isDevMode } from '@angular/core';
+import { isDevMode } from '@angular/core';
 
 import { ImageService } from '../../services/image';
 import { ImageItem } from '../../models/image.model';
@@ -33,14 +33,15 @@ export class ImageGallery implements OnInit {
   }
 
   openInNewWindow(image: ImageItem): void {
-    /*
     // Create URL to detail view with the proper base URL
     const baseUrl = this.getBaseUrl();
     const url = `${baseUrl}/detail/${image.id}`;
-    */
 
+    /*
     const urlTree = this.router.createUrlTree(['/detail', image.id]);
     const url = window.location.origin + this.router.serializeUrl(urlTree);
+    */
+
     window.open(url, '_blank');
   }
 
@@ -90,22 +91,20 @@ export class ImageGallery implements OnInit {
     }
   }
 
-  /*
   private getBaseUrl(): string {
     // In dev mode use root path, in production determine from location
     if (isDevMode()) {
       return '';
     }
-    
+
     // For GitHub Pages, extract the repository name from the URL
     const pathArray = window.location.pathname.split('/');
-    
+
     // If deployed to a subdirectory (like a GitHub repo name)
     if (pathArray.length > 1 && pathArray[1] !== '') {
       return `/${pathArray[1]}`;
     }
-    
+
     return '';
   }
-  */
 }
